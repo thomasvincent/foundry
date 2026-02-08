@@ -1,0 +1,110 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Foundry Configuration Schema",
+  "description": "Schema for .foundry.yaml configuration files",
+  "type": "object",
+  "required": ["version", "project", "profiles"],
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "integer",
+      "const": 1,
+      "description": "Configuration schema version"
+    },
+    "project": {
+      "type": "object",
+      "required": ["name"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Project name"
+        }
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "allow_script_steps": {
+          "type": "boolean",
+          "description": "Whether to allow script-type steps"
+        }
+      }
+    },
+    "profiles": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/Profile"
+      },
+      "minProperties": 1,
+      "description": "Execution profiles"
+    }
+  },
+  "definitions": {
+    "Profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "extends": {
+          "type": "string",
+          "description": "Name of profile to extend"
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Step"
+          },
+          "description": "List of execution steps"
+        }
+      }
+    },
+    "Step": {
+      "type": "object",
+      "required": ["id", "type", "command"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique step identifier"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["shell", "plugin", "script"],
+          "description": "Step type"
+        },
+        "command": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "description": "Command and arguments to execute"
+        },
+        "deps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Step IDs this step depends on"
+        },
+        "env": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Environment variables"
+        },
+        "timeout": {
+          "type": "string",
+          "description": "Execution timeout (e.g., '30s', '5m')"
+        },
+        "retries": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of retries on failure"
+        }
+      }
+    }
+  }
+}
