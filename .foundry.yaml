@@ -1,0 +1,17 @@
+version: 1
+project:
+  name: "foundry"
+policy:
+  allow_script_steps: false
+profiles:
+  default:
+    steps:
+      - id: lint
+        type: shell
+        command: ["bash", "-lc", "echo lint"]
+      - id: test
+        type: shell
+        deps: ["lint"]
+        command: ["bash", "-lc", "echo test"]
+  ci:
+    extends: default
