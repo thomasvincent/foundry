@@ -15,8 +15,8 @@ import (
 // Config represents the complete Foundry configuration loaded from .foundry.yaml.
 type Config struct {
 	Profiles map[string]Profile `yaml:"profiles" json:"profiles"`
-	Policy   policy.Policy      `yaml:"policy" json:"policy"`
 	Project  Project            `yaml:"project" json:"project"`
+	Policy   policy.Policy      `yaml:"policy" json:"policy"`
 	Version  int                `yaml:"version" json:"version"`
 }
 
@@ -34,11 +34,11 @@ type Profile struct {
 // Step represents a single execution unit within a profile.
 type Step struct {
 	Env     map[string]string `yaml:"env,omitempty" json:"env,omitempty"`
-	Command []string          `yaml:"command,omitempty" json:"command,omitempty"`
-	Deps    []string          `yaml:"deps,omitempty" json:"deps,omitempty"`
 	ID      string            `yaml:"id" json:"id"`
 	Type    string            `yaml:"type" json:"type"`
 	Timeout string            `yaml:"timeout,omitempty" json:"timeout,omitempty"`
+	Command []string          `yaml:"command,omitempty" json:"command,omitempty"`
+	Deps    []string          `yaml:"deps,omitempty" json:"deps,omitempty"`
 	Retries int               `yaml:"retries,omitempty" json:"retries,omitempty"`
 }
 
@@ -144,9 +144,8 @@ func validateProfile(name string, profile Profile, cfg *Config) error {
 		}
 
 		for _, dep := range step.Deps {
-			if !stepIDs[dep] {
-				// Dep might reference a step defined before this one; re-check after all steps.
-			}
+			// Dep might reference a step defined before this one; re-check after all steps.
+			_ = dep
 		}
 	}
 

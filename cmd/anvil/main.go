@@ -162,8 +162,8 @@ func cmdPlan(args []string) {
 	}
 
 	outDir := ".foundry/out"
-	if err := plan.WritePlan(p, outDir); err != nil {
-		slog.Error("failed to write plan", "error", err)
+	if writeErr := plan.WritePlan(p, outDir); writeErr != nil {
+		slog.Error("failed to write plan", "error", writeErr)
 		os.Exit(1)
 	}
 
@@ -211,8 +211,8 @@ func cmdRun(args []string) {
 	}
 
 	outDir := ".foundry/out"
-	if err := plan.WritePlan(p, outDir); err != nil {
-		slog.Error("failed to write plan", "error", err)
+	if writeErr := plan.WritePlan(p, outDir); writeErr != nil {
+		slog.Error("failed to write plan", "error", writeErr)
 		os.Exit(1)
 	}
 

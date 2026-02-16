@@ -96,8 +96,8 @@ func WriteJSON(path string, v interface{}) error {
 	data = append(data, '\n')
 
 	dir := filepath.Dir(path)
-	if err := EnsureDir(dir); err != nil {
-		return fmt.Errorf("write JSON ensure dir: %w", err)
+	if ensureErr := EnsureDir(dir); ensureErr != nil {
+		return fmt.Errorf("write JSON ensure dir: %w", ensureErr)
 	}
 
 	tmp, err := os.CreateTemp(dir, ".tmp.*")

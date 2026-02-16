@@ -16,23 +16,23 @@ import (
 
 // Plan represents an execution plan for a Foundry profile.
 type Plan struct {
-	Version     int        `json:"version"`
-	ProjectName string     `json:"project_name"`
-	Profile     string     `json:"profile"`
-	ConfigHash  string     `json:"config_hash"`
+	ProjectName string   `json:"project_name"`
+	Profile     string   `json:"profile"`
+	ConfigHash  string   `json:"config_hash"`
 	CreatedAt   string   `json:"created_at"`
 	Steps       []Step   `json:"steps"`
 	Order       []string `json:"order"`
+	Version     int      `json:"version"`
 }
 
 // Step represents a step within an execution plan.
 type Step struct {
+	Env     map[string]string `json:"env,omitempty"`
 	ID      string            `json:"id"`
 	Type    string            `json:"type"`
+	Timeout string            `json:"timeout,omitempty"`
 	Command []string          `json:"command,omitempty"`
 	Deps    []string          `json:"deps,omitempty"`
-	Env     map[string]string `json:"env,omitempty"`
-	Timeout string            `json:"timeout,omitempty"`
 	Retries int               `json:"retries,omitempty"`
 }
 

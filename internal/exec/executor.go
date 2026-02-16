@@ -36,9 +36,9 @@ type StepResult struct {
 
 // ExecutionResult represents the overall result of executing a plan.
 type ExecutionResult struct {
-	Steps    []StepResult `json:"steps"`
-	Status   string       `json:"status"` // success, failed
+	Status   string       `json:"status"`
 	Duration string       `json:"duration"`
+	Steps    []StepResult `json:"steps"`
 }
 
 // Execute runs the given plan according to the specified options.

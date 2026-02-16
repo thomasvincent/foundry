@@ -192,12 +192,12 @@ func TestBuild_Determinism(t *testing.T) {
 
 	// Verify by serializing to JSON and comparing structure (excluding timestamps).
 	type PlanSnapshot struct {
-		Version     int      `json:"version"`
 		ProjectName string   `json:"project_name"`
 		Profile     string   `json:"profile"`
 		ConfigHash  string   `json:"config_hash"`
 		Steps       []Step   `json:"steps"`
 		Order       []string `json:"order"`
+		Version     int      `json:"version"`
 	}
 
 	snap1 := PlanSnapshot{
