@@ -46,7 +46,7 @@ func TestCanonicalHash_Deterministic(t *testing.T) {
 
 	// Verify all characters are valid hex.
 	for _, ch := range hash1 {
-		if !isHexChar(rune(ch)) {
+		if !isHexChar(ch) {
 			t.Errorf("invalid hex character %q in hash: %q", ch, hash1)
 		}
 	}

@@ -96,8 +96,8 @@ func WriteJSON(path string, v interface{}) error {
 	data = append(data, '\n')
 
 	dir := filepath.Dir(path)
-	if err := EnsureDir(dir); err != nil {
-		return fmt.Errorf("write JSON ensure dir: %w", err)
+	if ensureErr := EnsureDir(dir); ensureErr != nil {
+		return fmt.Errorf("write JSON ensure dir: %w", ensureErr)
 	}
 
 	tmp, err := os.CreateTemp(dir, ".tmp.*")
@@ -107,18 +107,18 @@ func WriteJSON(path string, v interface{}) error {
 	tmpName := tmp.Name()
 
 	if _, err := tmp.Write(data); err != nil {
-		tmp.Close()
-		os.Remove(tmpName)
+		_ = tmp.Close()
+		_ = os.Remove(tmpName)
 		return fmt.Errorf("write JSON write temp: %w", err)
 	}
 
 	if err := tmp.Close(); err != nil {
-		os.Remove(tmpName)
+		_ = os.Remove(tmpName)
 		return fmt.Errorf("write JSON close temp: %w", err)
 	}
 
 	if err := os.Rename(tmpName, path); err != nil {
-		os.Remove(tmpName)
+		_ = os.Remove(tmpName)
 		return fmt.Errorf("write JSON rename: %w", err)
 	}
 
