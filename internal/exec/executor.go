@@ -17,27 +17,27 @@ import (
 
 // Options configures execution behavior.
 type Options struct {
-	Jobs           int           // Number of concurrent jobs
-	DefaultTimeout time.Duration // Default timeout for steps without explicit timeout
-	FailFast       bool          // Stop execution on first failure
 	OutDir         string        // Directory for output logs
+	DefaultTimeout time.Duration // Default timeout for steps without explicit timeout
+	Jobs           int           // Number of concurrent jobs
+	FailFast       bool          // Stop execution on first failure
 }
 
 // StepResult represents the result of executing a single step.
 type StepResult struct {
 	ID       string `json:"id"`
 	Status   string `json:"status"` // success, failed, skipped
-	ExitCode int    `json:"exit_code"`
 	Error    string `json:"error,omitempty"`
 	LogFile  string `json:"log_file,omitempty"`
-	Attempt  int    `json:"attempt"` // Number of attempts made (1-indexed)
 	Duration string `json:"duration"`
+	ExitCode int    `json:"exit_code"`
+	Attempt  int    `json:"attempt"` // Number of attempts made (1-indexed)
 }
 
 // ExecutionResult represents the overall result of executing a plan.
 type ExecutionResult struct {
-	Status   string       `json:"status"` // success, failed
 	Steps    []StepResult `json:"steps"`
+	Status   string       `json:"status"` // success, failed
 	Duration string       `json:"duration"`
 }
 
@@ -57,7 +57,7 @@ func Execute(ctx context.Context, p *plan.Plan, opts Options) (*ExecutionResult,
 	}
 
 	// Build step lookup map.
-	stepMap := make(map[string]plan.PlanStep, len(p.Steps))
+	stepMap := make(map[string]plan.Step, len(p.Steps))
 	for _, step := range p.Steps {
 		stepMap[step.ID] = step
 	}
@@ -211,7 +211,7 @@ func Execute(ctx context.Context, p *plan.Plan, opts Options) (*ExecutionResult,
 }
 
 // executeStep executes a single step with retries.
-func executeStep(ctx context.Context, step plan.PlanStep, opts Options) *StepResult {
+func executeStep(ctx context.Context, step plan.Step, opts Options) *StepResult {
 	maxAttempts := step.Retries + 1
 	if maxAttempts < 1 {
 		maxAttempts = 1
@@ -286,7 +286,7 @@ func WriteResults(results *ExecutionResult, outDir string) error {
 	if err != nil {
 		return fmt.Errorf("write results: create file: %w", err)
 	}
-	defer data.Close()
+	defer func() { _ = data.Close() }()
 
 	encoder := json.NewEncoder(data)
 	encoder.SetIndent("", "  ")
@@ -298,7 +298,7 @@ func WriteResults(results *ExecutionResult, outDir string) error {
 }
 
 // executeStepAttempt executes a single attempt of a step.
-func executeStepAttempt(ctx context.Context, step plan.PlanStep, opts Options, attempt int) *StepResult {
+func executeStepAttempt(ctx context.Context, step plan.Step, opts Options, attempt int) *StepResult {
 	result := &StepResult{
 		ID:      step.ID,
 		Status:  "failed",
@@ -328,7 +328,7 @@ func executeStepAttempt(ctx context.Context, step plan.PlanStep, opts Options, a
 			result.Error = fmt.Sprintf("create log file: %v", err)
 			return result
 		}
-		defer logFile.Close()
+		defer func() { _ = logFile.Close() }()
 		result.LogFile = logPath
 	}
 

@@ -20,13 +20,13 @@ type Plan struct {
 	ProjectName string     `json:"project_name"`
 	Profile     string     `json:"profile"`
 	ConfigHash  string     `json:"config_hash"`
-	CreatedAt   string     `json:"created_at"`
-	Steps       []PlanStep `json:"steps"`
-	Order       []string   `json:"order"`
+	CreatedAt   string   `json:"created_at"`
+	Steps       []Step   `json:"steps"`
+	Order       []string `json:"order"`
 }
 
-// PlanStep represents a step within an execution plan.
-type PlanStep struct {
+// Step represents a step within an execution plan.
+type Step struct {
 	ID      string            `json:"id"`
 	Type    string            `json:"type"`
 	Command []string          `json:"command,omitempty"`
@@ -45,10 +45,10 @@ func Build(projectName, profileName string, steps []config.Step, configData []by
 		return nil, fmt.Errorf("build plan: profile name is empty")
 	}
 
-	// Convert config.Step to PlanStep.
-	planSteps := make([]PlanStep, len(steps))
+	// Convert config.Step to Step.
+	planSteps := make([]Step, len(steps))
 	for i, s := range steps {
-		planSteps[i] = PlanStep{
+		planSteps[i] = Step{
 			ID:      s.ID,
 			Type:    s.Type,
 			Command: s.Command,
@@ -83,13 +83,13 @@ func Build(projectName, profileName string, steps []config.Step, configData []by
 // TopologicalSort produces a deterministic execution order for plan steps.
 // Steps with no dependencies are sorted alphabetically for determinism.
 // Returns an error if a cycle is detected.
-func TopologicalSort(steps []PlanStep) ([]string, error) {
+func TopologicalSort(steps []Step) ([]string, error) {
 	if len(steps) == 0 {
 		return []string{}, nil
 	}
 
 	// Build adjacency list and in-degree map.
-	stepMap := make(map[string]PlanStep, len(steps))
+	stepMap := make(map[string]Step, len(steps))
 	inDegree := make(map[string]int, len(steps))
 	adjList := make(map[string][]string, len(steps))
 
@@ -159,7 +159,7 @@ func WritePlan(p *Plan, outDir string) error {
 	if err != nil {
 		return fmt.Errorf("write plan: create file: %w", err)
 	}
-	defer data.Close()
+	defer func() { _ = data.Close() }()
 
 	encoder := json.NewEncoder(data)
 	encoder.SetIndent("", "  ")

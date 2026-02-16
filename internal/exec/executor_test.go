@@ -23,7 +23,7 @@ func TestExecute_SimpleSuccess(t *testing.T) {
 		Profile:     "default",
 		ConfigHash:  "abc123",
 		CreatedAt:   time.Now().UTC().Format(time.RFC3339),
-		Steps: []plan.PlanStep{
+		Steps: []plan.Step{
 			{ID: "test", Type: "shell", Command: []string{"echo", "hello"}},
 		},
 		Order: []string{"test"},
@@ -70,7 +70,7 @@ func TestExecute_StepFailure(t *testing.T) {
 		Profile:     "default",
 		ConfigHash:  "abc123",
 		CreatedAt:   time.Now().UTC().Format(time.RFC3339),
-		Steps: []plan.PlanStep{
+		Steps: []plan.Step{
 			{ID: "failing", Type: "shell", Command: []string{"false"}},
 		},
 		Order: []string{"failing"},
@@ -117,7 +117,7 @@ func TestExecute_DependencySkip(t *testing.T) {
 		Profile:     "default",
 		ConfigHash:  "abc123",
 		CreatedAt:   time.Now().UTC().Format(time.RFC3339),
-		Steps: []plan.PlanStep{
+		Steps: []plan.Step{
 			{ID: "failing", Type: "shell", Command: []string{"false"}},
 			{ID: "dependent", Type: "shell", Command: []string{"echo", "dependent"}, Deps: []string{"failing"}},
 		},
@@ -175,7 +175,7 @@ func TestExecute_Concurrency(t *testing.T) {
 		Profile:     "default",
 		ConfigHash:  "abc123",
 		CreatedAt:   time.Now().UTC().Format(time.RFC3339),
-		Steps: []plan.PlanStep{
+		Steps: []plan.Step{
 			{ID: "a", Type: "shell", Command: []string{"sleep", "0.1"}},
 			{ID: "b", Type: "shell", Command: []string{"sleep", "0.1"}},
 			{ID: "c", Type: "shell", Command: []string{"sleep", "0.1"}},
@@ -228,7 +228,7 @@ func TestExecute_Retries(t *testing.T) {
 		Profile:     "default",
 		ConfigHash:  "abc123",
 		CreatedAt:   time.Now().UTC().Format(time.RFC3339),
-		Steps: []plan.PlanStep{
+		Steps: []plan.Step{
 			{ID: "retry-test", Type: "shell", Command: cmd, Retries: 1},
 		},
 		Order: []string{"retry-test"},
@@ -275,7 +275,7 @@ func TestExecute_LogCapture(t *testing.T) {
 		Profile:     "default",
 		ConfigHash:  "abc123",
 		CreatedAt:   time.Now().UTC().Format(time.RFC3339),
-		Steps: []plan.PlanStep{
+		Steps: []plan.Step{
 			{ID: "log-test", Type: "shell", Command: []string{"echo", "hello-from-log"}},
 		},
 		Order: []string{"log-test"},

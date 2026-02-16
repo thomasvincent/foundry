@@ -12,7 +12,7 @@ import (
 func TestTopologicalSort_Simple(t *testing.T) {
 	t.Parallel()
 
-	steps := []PlanStep{
+	steps := []Step{
 		{ID: "lint", Type: "shell", Deps: []string{}},
 		{ID: "test", Type: "shell", Deps: []string{"lint"}},
 	}
@@ -35,7 +35,7 @@ func TestTopologicalSort_Simple(t *testing.T) {
 func TestTopologicalSort_NoDeps(t *testing.T) {
 	t.Parallel()
 
-	steps := []PlanStep{
+	steps := []Step{
 		{ID: "c", Type: "shell", Deps: []string{}},
 		{ID: "a", Type: "shell", Deps: []string{}},
 		{ID: "b", Type: "shell", Deps: []string{}},
@@ -61,7 +61,7 @@ func TestTopologicalSort_NoDeps(t *testing.T) {
 func TestTopologicalSort_Diamond(t *testing.T) {
 	t.Parallel()
 
-	steps := []PlanStep{
+	steps := []Step{
 		{ID: "a", Type: "shell", Deps: []string{}},
 		{ID: "b", Type: "shell", Deps: []string{"a"}},
 		{ID: "c", Type: "shell", Deps: []string{"a"}},
@@ -96,7 +96,7 @@ func TestTopologicalSort_Diamond(t *testing.T) {
 func TestTopologicalSort_Cycle(t *testing.T) {
 	t.Parallel()
 
-	steps := []PlanStep{
+	steps := []Step{
 		{ID: "a", Type: "shell", Deps: []string{"b"}},
 		{ID: "b", Type: "shell", Deps: []string{"a"}},
 	}
@@ -115,7 +115,7 @@ func TestTopologicalSort_Cycle(t *testing.T) {
 func TestTopologicalSort_Empty(t *testing.T) {
 	t.Parallel()
 
-	steps := []PlanStep{}
+	steps := []Step{}
 
 	order, err := TopologicalSort(steps)
 	if err != nil {
@@ -192,12 +192,12 @@ func TestBuild_Determinism(t *testing.T) {
 
 	// Verify by serializing to JSON and comparing structure (excluding timestamps).
 	type PlanSnapshot struct {
-		Version     int        `json:"version"`
-		ProjectName string     `json:"project_name"`
-		Profile     string     `json:"profile"`
-		ConfigHash  string     `json:"config_hash"`
-		Steps       []PlanStep `json:"steps"`
-		Order       []string   `json:"order"`
+		Version     int      `json:"version"`
+		ProjectName string   `json:"project_name"`
+		Profile     string   `json:"profile"`
+		ConfigHash  string   `json:"config_hash"`
+		Steps       []Step   `json:"steps"`
+		Order       []string `json:"order"`
 	}
 
 	snap1 := PlanSnapshot{
